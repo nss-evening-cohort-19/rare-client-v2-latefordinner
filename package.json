@@ -1,8 +1,8 @@
 {
-  "name": "Rare-V2",
+  "name": "rare-v2",
   "private": true,
   "version": "1.0.0",
-  "author": "A.T.T.I.C",
+  "author": "Attic",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
