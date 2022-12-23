@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
-import { createPost, updatePost } from '../utils/postData';
+import { createPost, getCategoryTypes, updatePost } from '../utils/postData';
 // import { loginUser } from '../../utils/data/AuthManager';
 
 const initialState = {
@@ -13,17 +13,13 @@ const initialState = {
   title: ' ',
   imageUrl: ' ',
   content: ' ',
+  category: ' ',
 };
 
 const PostForm = ({ user, postObj }) => {
   const [currentPost, setCurrentPost] = useState(initialState);
+  const [categoryTypes, setCategoryTypes] = useState([]);
   const router = useRouter();
-
-  useEffect(() => {
-    if (postObj.id) {
-      setCurrentPost(postObj);
-    }
-  }, [postObj]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,12 +31,34 @@ const PostForm = ({ user, postObj }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const post = {
+      publication_date: currentPost.publicationDate,
+      title: currentPost.title,
+      image_url: currentPost.imageUrl,
+      content: currentPost.content,
+      category: currentPost.category,
+      user: user.uid,
+    };
     if (postObj.id) {
-      updatePost(user, currentPost, postObj.id).then(() => router.push('/posts'));
+      updatePost(post, postObj.id).then(() => router.push('/posts'));
     } else {
-      createPost(user, currentPost).then(() => router.push('/posts'));
+      createPost(post).then(() => router.push('/posts'));
     }
   };
+
+  useEffect(() => {
+    if (postObj.id) {
+      const editPost = {
+        publicationDate: postObj.publication_date,
+        title: postObj.title,
+        imageUrl: postObj.image_url,
+        content: postObj.content,
+        category: postObj.category.id,
+      };
+      setCurrentPost(editPost);
+    }
+    getCategoryTypes().then(setCategoryTypes);
+  }, [postObj]);
 
   return (
     <>
@@ -63,6 +81,12 @@ const PostForm = ({ user, postObj }) => {
         </Form.Group>
         <Form.Group className="mb-3">
           <Form.Label>Category</Form.Label>
+          <Form.Select name="category" value={currentPost.category} onChange={handleChange} required>
+            <option value="">Select a Category </option>
+            {categoryTypes?.map((category) => (
+              <option key={category.id} value={category.id} label={category.label} />
+            ))};
+          </Form.Select>
         </Form.Group>
 
         <Button variant="primary" type="submit">
@@ -74,22 +98,22 @@ const PostForm = ({ user, postObj }) => {
 };
 
 PostForm.propTypes = {
-  postObj: PropTypes.shape({
-    id: PropTypes.number,
-    publicationDate: PropTypes.string,
-    title: PropTypes.string,
-    content: PropTypes.string,
-    imageUrl: PropTypes.string,
-    createdOn: PropTypes.string,
-    categoryId: PropTypes.shape({
-      id: PropTypes.number,
-      label: PropTypes.string,
-    }),
-  }),
   user: PropTypes.shape({
     uid: PropTypes.string,
     id: PropTypes.number,
   }).isRequired,
+  postObj: PropTypes.shape({
+    id: PropTypes.number,
+    publication_date: PropTypes.number,
+    title: PropTypes.string,
+    content: PropTypes.string,
+    image_url: PropTypes.string,
+    createdOn: PropTypes.string,
+    category: PropTypes.shape({
+      id: PropTypes.number,
+      label: PropTypes.string,
+    }),
+  }),
 };
 
 PostForm.defaultProps = {

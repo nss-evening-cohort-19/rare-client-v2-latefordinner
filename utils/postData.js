@@ -38,6 +38,11 @@ const updatePost = (post, id) => new Promise((resolve, reject) => {
     .then((response) => resolve(response.data))
     .catch(reject);
 });
+const getCategoryTypes = () => new Promise((resolve, reject) => {
+  fetch(`${clientCredentials.databaseURL}/categories`)
+    .then((resp) => resolve(resp.json()))
+    .catch(reject);
+});
 
 const deletePost = (id) => new Promise((resolve, reject) => {
   fetch(`${clientCredentials.databaseURL}/posts/${id}`, {
@@ -50,5 +55,5 @@ const deletePost = (id) => new Promise((resolve, reject) => {
 
 // eslint-disable-next-line import/prefer-default-export
 export {
-  getPosts, getPostById, createPost, updatePost, deletePost,
+  getPosts, getPostById, createPost, updatePost, deletePost, getCategoryTypes,
 };
