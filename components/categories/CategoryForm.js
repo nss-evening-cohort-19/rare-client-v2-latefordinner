@@ -9,7 +9,7 @@ const initialState = {
   label: '',
 };
 
-function CategoryForm({ obj }) {
+function CategoryForm({ categoryObj }) {
   const [categoryForm, setCategoryForm] = useState(initialState);
   const [category, setCategory] = useState([]);
   const router = useRouter();
@@ -17,8 +17,8 @@ function CategoryForm({ obj }) {
   useEffect(() => {
     getCategories().then(setCategory);
     console.warn(category);
-    if (obj.id) setCategoryForm(obj);
-  }, [obj]);
+    if (categoryObj.id) setCategoryForm(categoryObj);
+  }, [categoryObj]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,7 +30,7 @@ function CategoryForm({ obj }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (obj.id) {
+    if (categoryObj.id) {
       updateCategory(categoryForm)
         .then(() => router.push('/'));
     } else {
@@ -43,24 +43,24 @@ function CategoryForm({ obj }) {
 
   return (
     <Form className="form-floating" onSubmit={handleSubmit}>
-      <h2 className="text-black mt-5">{obj.id ? 'Update' : 'Create'} a Category</h2>
+      <h2 className="text-black mt-5">{categoryObj.id ? 'Update' : 'Create'} a Category</h2>
       <FloatingLabel controlId="floatingInput" label="Enter New Category" className="mb-3">
         <Form.Control type="text" placeholder="Label" name="label" value={categoryForm.label} onChange={handleChange} required />
       </FloatingLabel>
-      <Button type="submit">{obj.id ? 'Update' : 'Create'} Category</Button>
+      <Button type="submit">{categoryObj.id ? 'Update' : 'Create'} Category</Button>
     </Form>
   );
 }
 
 CategoryForm.propTypes = {
-  obj: PropTypes.shape({
+  categoryObj: PropTypes.shape({
     id: PropTypes.number,
     label: PropTypes.string,
   }),
 };
 
 CategoryForm.defaultProps = {
-  obj: initialState,
+  categoryObj: initialState,
 };
 
 export default CategoryForm;
